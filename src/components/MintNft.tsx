@@ -1,13 +1,19 @@
 import { NFT_CONTRACT_ADDRESS, ERC721ABI } from "@/components/constants";
 import { BiconomySmartAccount } from "@biconomy/account";
-import { createPublicClient, http } from "viem";
+import { createPublicClient, http, webSocket } from "viem";
 import { polygonMumbai } from "viem/chains";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { MintModal } from "./ui/MintModal";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/GlobalRedux/store";
+import { login } from "@/GlobalRedux/Features/smartAccountslice";
 
+const transport = webSocket(
+  "wss://polygon-mumbai.g.alchemy.com/v2/Mh7MEm0SLywtlNh1_bcuroflDlQ3wYpu"
+);
 export const publicClient = createPublicClient({
   chain: polygonMumbai,
-  transport: http(),
+  transport,
 });
 
 export default function MintNft({
@@ -15,6 +21,7 @@ export default function MintNft({
 }: {
   smartAccount: BiconomySmartAccount;
 }) {
+  const dispatch = useDispatch<AppDispatch>();
   const [isImageSelected, setIsImageSelected] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   //showing user Selected Image
@@ -34,6 +41,7 @@ export default function MintNft({
     const smartContractAddress = await smartAccount.getSmartAccountAddress();
     setSmartContractAddress(smartContractAddress);
     localStorage.setItem("address", smartContractAddress);
+    dispatch(login(smartContractAddress));
   }
 
   async function getBalance() {
@@ -46,7 +54,7 @@ export default function MintNft({
       address: NFT_CONTRACT_ADDRESS,
       abi: ERC721ABI,
       functionName: "balanceOf",
-      args: [smartContractAddress],
+      args: [localStorage.getItem("address")],
     });
     if (!data) {
       return;
@@ -56,8 +64,7 @@ export default function MintNft({
 
   useEffect(() => {
     getBalance();
-  }, [smartContractAddress]);
-
+  });
   // // Function to handle removing the selected image
   const handleRemoveImage = () => {
     setSelectedImage(null);

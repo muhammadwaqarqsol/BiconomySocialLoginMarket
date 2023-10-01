@@ -1,17 +1,23 @@
-import { createPublicClient, http } from "viem";
+import { createPublicClient, http, webSocket } from "viem";
 import { polygonMumbai } from "viem/chains";
 import { ERC721ABI, NFT_CONTRACT_ADDRESS } from "@/components/constants";
 import { useEffect, useState } from "react";
 import { OwnedListedNfts } from "./web3/ownerof";
+import { useAppSelector } from "@/GlobalRedux/store";
+const transport = webSocket(
+  "wss://polygon-mumbai.g.alchemy.com/v2/Mh7MEm0SLywtlNh1_bcuroflDlQ3wYpu"
+);
 
 export const publicClient = createPublicClient({
   chain: polygonMumbai,
-  transport: http(),
+  transport,
 });
 
 const MyNfts = () => {
+  const useraddress = useAppSelector(
+    (state) => state.smartAccountReducer.value.smartAccountaddress
+  );
   const [totaltokens, setTotalTokenId] = useState<string | undefined>("");
-  const [Ownerof, setOwnerOf] = useState<string | undefined>("");
   const [tokensData, setTokensData] = useState<bigint[]>([]);
 
   async function getTotalTokenId() {
@@ -23,15 +29,18 @@ const MyNfts = () => {
     setTotalTokenId(data?.toString());
   }
 
-  async function getBalance() {
-    const data = await publicClient.readContract({
-      address: NFT_CONTRACT_ADDRESS,
-      abi: ERC721ABI,
-      functionName: "balanceOf",
-      args: [localStorage.getItem("address")],
-    });
-    setOwnerOf(data?.toString());
-  }
+  useEffect(() => {
+    console.log(useraddress);
+  });
+  // async function getBalance() {
+  //   const data = await publicClient.readContract({
+  //     address: NFT_CONTRACT_ADDRESS,
+  //     abi: ERC721ABI,
+  //     functionName: "balanceOf",
+  //     args: [useraddress],
+  //   });
+  //   setOwnerOf(data?.toString());
+  // }
 
   // Define the getOwnedToken function
   async function getOwnedToken() {
@@ -54,7 +63,7 @@ const MyNfts = () => {
 
   // Use a default value if address is undefined
   useEffect(() => {
-    getBalance();
+    // getBalance();
     getTotalTokenId();
     getOwnedToken();
   });
@@ -74,7 +83,7 @@ const MyNfts = () => {
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5">
-        {Ownerof === "0" ? (
+        {totaltokens === "0" ? (
           <div className="col-span-8 flex items-center justify-center">
             <p className="text-4xl text-red-400">You Don't Own Anything</p>
             <svg
@@ -401,7 +410,6 @@ const MyNfts = () => {
           tokensData.map((item, index) => (
             <OwnedListedNfts key={Number(item)} projectID={Number(item)} />
           ))
-          
         )}
       </div>
     </div>

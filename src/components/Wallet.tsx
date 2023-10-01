@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState, Fragment } from "react";
 import SocialLogin from "@biconomy/web3-auth";
 import { ethers } from "ethers";
