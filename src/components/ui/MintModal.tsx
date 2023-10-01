@@ -64,104 +64,6 @@ export const MintModal: React.FC<MintModalProps> = ({
     setTokenUri(TokenUri);
   };
 
-  //   setMintstatus(true);
-  //   const contract = new ethers.Contract(
-  //     NFT_CONTRACT_ADDRESS,
-  //     ERC721ABI,
-  //     smartAccount.provider
-  //   );
-  //   try {
-  //     const minTx = await contract.populateTransaction.createToken(
-  //       smartContractAddress,
-  //       tokenUri
-  //     );
-  //     console.log(minTx.data);
-  //     const tx1 = {
-  //       to: NFT_CONTRACT_ADDRESS,
-  //       data: minTx.data,
-  //     };
-  //     console.log("here before userop");
-  //     let userOp = await smartAccount.buildUserOp([tx1]);
-  //     console.log({ userOp });
-  //     const biconomyPaymaster =
-  //       smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
-  //     console.log(biconomyPaymaster);
-  //     console.log(smartAccount);
-  //     let paymasterServiceData: SponsorUserOperationDto = {
-  //       mode: PaymasterMode.SPONSORED,
-  //     };
-  //     console.log("Hello");
-  //     const paymasterAndDataResponse =
-  //       await biconomyPaymaster.getPaymasterAndData(
-  //         userOp,
-  //         paymasterServiceData
-  //       );
-
-  //     console.log("Hello2");
-
-  //     userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
-  //     console.log("Hello3");
-  //     const userOpResponse = await smartAccount.sendUserOp(userOp);
-  //     console.log("Hello4");
-  //     console.log("userOpHash", userOpResponse);
-  //     const { receipt } = await userOpResponse.wait(1);
-  //     console.log("txHash", receipt.transactionHash);
-  //   } catch (err) {
-  //     console.error(err);
-  //     console.log(err);
-  //   }
-  //   setMintstatus(false);
-  // };
-  // const handleMint = async () => {
-  //   setMintstatus(true);
-  //   const contract = new ethers.Contract(
-  //     NFT_CONTRACT_ADDRESS,
-  //     ERC721ABI,
-  //     smartAccount.provider
-  //   );
-  //   try {
-  //     const minTx = await contract.populateTransaction.createToken(
-  //       smartContractAddress,
-  //       tokenUri
-  //     );
-  //     console.log(minTx.data);
-  //     const tx1 = {
-  //       to: NFT_CONTRACT_ADDRESS,
-  //       data: minTx.data,
-  //     };
-  //     console.log("here before userop");
-  //     let userOp = await smartAccount.buildUserOp([tx1]);
-  //     console.log({ userOp });
-  //     const biconomyPaymaster =
-  //       smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
-  //     console.log(biconomyPaymaster);
-  //     console.log(smartAccount);
-  //     let paymasterServiceData: SponsorUserOperationDto = {
-  //       mode: PaymasterMode.SPONSORED,
-  //     };
-  //     console.log("Hello");
-  //     const paymasterAndDataResponse =
-  //       await biconomyPaymaster.getPaymasterAndData(
-  //         userOp,
-  //         paymasterServiceData
-  //       );
-
-  //     console.log("Hello2");
-
-  //     userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
-  //     console.log("Hello3");
-  //     const userOpResponse = await smartAccount.sendUserOp(userOp);
-  //     console.log("Hello4");
-  //     console.log("userOpHash", userOpResponse);
-  //     const { receipt } = await userOpResponse.wait(1);
-  //     console.log("txHash", receipt.transactionHash);
-  //     setMintstatus(false); // Set mintstatus to false after transaction is mined
-  //   } catch (err) {
-  //     console.error(err);
-  //     console.log(err);
-  //     setMintstatus(false); // Set mintstatus to false in case of an error
-  //   }
-  // };
   const handleMint = async () => {
     setMintstatus(false);
     const contract = new ethers.Contract(
@@ -222,6 +124,66 @@ export const MintModal: React.FC<MintModalProps> = ({
     }
   };
 
+  // async function handleUpload() {
+  //   try {
+  //     console.log("smart Account in add nft: ", smartAccount);
+
+  //     // Create an Ethers Contract instance for USDC
+  //     const readProvider = smartAccount.provider;
+  //     console.log("READ Provider : ", readProvider);
+  //     // make contract instance
+  //     const nftContract = new ethers.Contract(
+  //       NFT_CONTRACT_ADDRESS,
+  //       ERC721ABI,
+  //       readProvider
+  //     );
+
+  //     // Create the calldata for our UserOperation
+  //     const populatedTransferTxn =
+  //       await nftContract.populateTransaction.createToken(
+  //         smartContractAddress,
+  //         tokenUri
+  //       );
+
+  //     console.log("Populate :: ", populatedTransferTxn.data);
+  //     const calldata = populatedTransferTxn.data;
+  //     // Build the UserOperation
+  //     const userOp = await smartAccount.buildUserOp([
+  //       {
+  //         to: NFT_CONTRACT_ADDRESS,
+  //         data: calldata,
+  //       },
+  //     ]);
+
+  //     console.log("USER OP : ", userOp);
+
+  //     // Get the paymaster fee quote from Biconomy
+  //     const biconomyPaymaster =
+  //       smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
+
+  //     let paymasterServiceData: SponsorUserOperationDto = {
+  //       mode: PaymasterMode.SPONSORED,
+  //     };
+  //     console.log("Check Payment service..", paymasterServiceData);
+  //     const paymasterAndDataResponse =
+  //       await biconomyPaymaster.getPaymasterAndData(
+  //         userOp,
+  //         paymasterServiceData
+  //       );
+
+  //     userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
+  //     console.log("check...", paymasterAndDataResponse);
+
+  //     const userOpResponse = await smartAccount.sendUserOp(userOp);
+  //     console.log("userOpHash", userOpResponse);
+  //     const { receipt } = await userOpResponse.wait(1);
+  //     console.log("txHash..", receipt);
+  //     console.log(Number(receipt.logs[2]?.data), "HEX TO decimal");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
   function cancelAll() {
     setShowModal(false);
     setTokenUri("");
@@ -229,6 +191,7 @@ export const MintModal: React.FC<MintModalProps> = ({
     setMetadataStatus(false);
     setImageStatus(false);
     setSelectedImage(null);
+    setError(false);
     setNftDetails({ NftName: "", Description: "" });
   }
 

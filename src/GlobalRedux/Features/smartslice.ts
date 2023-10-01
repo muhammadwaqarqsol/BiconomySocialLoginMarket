@@ -6,13 +6,11 @@ type InitialState = {
 };
 
 type SmartAccount = {
-  smartAccountaddress: string;
   smartAccount: BiconomySmartAccount;
 };
 
 const initialState = {
   value: {
-    smartAccountaddress: "",
     smartAccount: {} as BiconomySmartAccount,
   } as SmartAccount,
 } as InitialState;
@@ -21,19 +19,19 @@ export const smartAccount = createSlice({
   name: "smartAccount",
   initialState,
   reducers: {
-    logout: () => {
+    removeAccount: () => {
       return initialState;
     },
-    login: (state, action: PayloadAction<string>) => {
+    setAccount: (state, action: PayloadAction<BiconomySmartAccount>) => {
       return {
         value: {
-          smartAccountaddress: action.payload,
-          smartAccount: {} as BiconomySmartAccount,
+          smartAccount: action.payload,
         },
       };
     },
   },
 });
-export const { logout, login } = smartAccount.actions;
+
+export const { removeAccount, setAccount } = smartAccount.actions;
 
 export default smartAccount.reducer;

@@ -12,10 +12,11 @@ const PagesModal: React.FC<PageModal> = ({ isOpen }: PageModal) => {
         <div className="bg-gray-300  rounded-xl">
           <ul className="flex flex-col justify-center items-center">
             <li className="underline">
-              <Link href="/mynfts">Mint NFT</Link>
+              <Link href="/mynfts">My NFTs</Link>
             </li>
-            <li className="underline">My NFTs</li>
-            <li className="underline">Listed NFTs</li>
+            <li className="underline">
+              <Link href="/nftlisting">Listed NFTs</Link>
+            </li>
           </ul>
         </div>
       </div>

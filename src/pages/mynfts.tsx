@@ -1,74 +1,44 @@
-import { createPublicClient, http, webSocket } from "viem";
-import { polygonMumbai } from "viem/chains";
 import { ERC721ABI, NFT_CONTRACT_ADDRESS } from "@/components/constants";
-import { useEffect, useState } from "react";
 import { OwnedListedNfts } from "./web3/ownerof";
+import { useAccount, useContractRead } from "wagmi";
 import { useAppSelector } from "@/GlobalRedux/store";
-const transport = webSocket(
-  "wss://polygon-mumbai.g.alchemy.com/v2/Mh7MEm0SLywtlNh1_bcuroflDlQ3wYpu"
-);
-
-export const publicClient = createPublicClient({
-  chain: polygonMumbai,
-  transport,
-});
+import { useEffect } from "react";
 
 const MyNfts = () => {
   const useraddress = useAppSelector(
     (state) => state.smartAccountReducer.value.smartAccountaddress
   );
-  const [totaltokens, setTotalTokenId] = useState<string | undefined>("");
-  const [tokensData, setTokensData] = useState<bigint[]>([]);
-
-  async function getTotalTokenId() {
-    const data = await publicClient.readContract({
-      address: NFT_CONTRACT_ADDRESS,
-      abi: ERC721ABI,
-      functionName: "_tokenIds",
-    });
-    setTotalTokenId(data?.toString());
-  }
+  const { data } = useContractRead({
+    address: NFT_CONTRACT_ADDRESS,
+    abi: ERC721ABI,
+    functionName: "getTokens",
+  }) as { data: bigint[] };
 
   useEffect(() => {
-    console.log(useraddress);
+    console.log(data);
   });
-  // async function getBalance() {
-  //   const data = await publicClient.readContract({
-  //     address: NFT_CONTRACT_ADDRESS,
-  //     abi: ERC721ABI,
-  //     functionName: "balanceOf",
-  //     args: [useraddress],
-  //   });
-  //   setOwnerOf(data?.toString());
-  // }
+  const { data: totaltokens } = useContractRead({
+    address: NFT_CONTRACT_ADDRESS,
+    abi: ERC721ABI,
+    functionName: "_tokenIds",
+  });
 
-  // Define the getOwnedToken function
-  async function getOwnedToken() {
-    try {
-      const data: unknown = await publicClient.readContract({
-        address: NFT_CONTRACT_ADDRESS,
-        abi: ERC721ABI,
-        functionName: "getTokens",
-      });
+  const { data: Ownerof } = useContractRead({
+    address: NFT_CONTRACT_ADDRESS,
+    abi: ERC721ABI,
+    functionName: "balanceOf",
+    args: [useraddress],
+  });
 
-      // Use type assertion (casting) to specify the expected type
-      const tokensData = data as bigint[] | undefined;
-
-      // Ensure data is an array, or provide a default empty array
-      setTokensData(tokensData || []);
-    } catch (error) {
-      console.error("Error fetching owned tokens:", error);
-    }
+  if (!useraddress) {
+    return (
+      <div className="flex justify-center items-center text-2xl text-red-500 rounded-lg">
+        Connect wallet First
+      </div>
+    );
   }
 
-  // Use a default value if address is undefined
-  useEffect(() => {
-    // getBalance();
-    getTotalTokenId();
-    getOwnedToken();
-  });
-
-  if (!totaltokens) {
+  if (!totaltokens || (data && data.length === 0)) {
     return (
       <div className="justify-center items-center flex flex-col">
         <img src="error.png" alt="Error" />
@@ -83,7 +53,7 @@ const MyNfts = () => {
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5">
-        {totaltokens === "0" ? (
+        {Ownerof?.toString() === "0" ? (
           <div className="col-span-8 flex items-center justify-center">
             <p className="text-4xl text-red-400">You Don't Own Anything</p>
             <svg
@@ -407,12 +377,18 @@ const MyNfts = () => {
             </svg>
           </div>
         ) : (
-          tokensData.map((item, index) => (
-            <OwnedListedNfts key={Number(item)} projectID={Number(item)} />
-          ))
+          data.map((item, index) => {
+            // Convert bigint to string
+            const itemString = item.toString();
+            const itemnumber = parseInt(itemString);
+            // Now you can pass itemString as a string parameter
+            console.log(itemnumber);
+            return <OwnedListedNfts key={itemnumber} projectID={itemnumber} />;
+          })
         )}
       </div>
     </div>
   );
 };
+
 export default MyNfts;

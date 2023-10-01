@@ -34,7 +34,7 @@ export default function Wallet() {
         "https://biconomy-social-login-git-main-muhammad-waqar-uit.vercel.app"
       );
       const signature2 = await socialLoginSDK.whitelistUrl(
-        "http:localhost:3000"
+        "http://localhost:3000/"
       );
       await socialLoginSDK.init({
         chainId: ethers.utils.hexValue(ChainId.POLYGON_MUMBAI).toString(),
@@ -42,7 +42,7 @@ export default function Wallet() {
         whitelistUrls: {
           "https://biconomy-social-login-git-main-muhammad-waqar-uit.vercel.app":
             signature1,
-          "http:localhost:3000": signature2,
+          "http://localhost:3000/": signature2,
         },
       });
       sdkRef.current = socialLoginSDK;

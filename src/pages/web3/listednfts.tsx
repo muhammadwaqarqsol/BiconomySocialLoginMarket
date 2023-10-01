@@ -1,9 +1,7 @@
 import { ERC721ABI, NFT_CONTRACT_ADDRESS } from "@/components/constants";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { createPublicClient, http } from "viem";
-import { polygonMumbai } from "viem/chains";
-
+import { useContractRead } from "wagmi";
 interface ListedNftsProps {
   projectID: number;
   // projectID?: React.Reac/tNode; // Change the type of projectID to match your data type
@@ -15,55 +13,48 @@ interface NFTData {
   description: string;
   // Add more properties if needed
 }
-export const publicClient = createPublicClient({
-  chain: polygonMumbai,
-  transport: http(),
-});
+
 export const ListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
   const [nftData, setNftData] = useState<NFTData | null>(null); // Use NFTData type for nftData initially
-  const [data, setData] = useState<string | undefined>("");
-  const [Ownerof, setOwnerof] = useState<string | undefined>("");
 
-  async function getTokenUri() {
-    const data = await publicClient.readContract({
-      address: NFT_CONTRACT_ADDRESS,
-      abi: ERC721ABI,
-      functionName: "tokenURI",
-      args: [projectID.toString()],
-    });
-    setData(data?.toString());
-  }
+  const { data, isError, error } = useContractRead({
+    address: NFT_CONTRACT_ADDRESS,
+    abi: ERC721ABI,
+    functionName: "tokenURI",
+    args: [projectID.toString()],
+  });
 
-  async function getOwnerOf() {
-    const data = await publicClient.readContract({
-      address: NFT_CONTRACT_ADDRESS,
-      abi: ERC721ABI,
-      functionName: "ownerOf",
-      args: [projectID.toString()],
-    });
-    setOwnerof(data?.toString());
-  }
-
-  useEffect(() => {
-    getOwnerOf();
-    getTokenUri();
+  const { data: Ownerof, error: projectIderor } = useContractRead({
+    address: NFT_CONTRACT_ADDRESS,
+    abi: ERC721ABI,
+    functionName: "ownerOf",
+    args: [projectID.toString()],
   });
 
   useEffect(() => {
-    if (data) {
-      // Make an Axios GET request to the data URL and update the state with the fetched data
-      axios
-        .get(data?.toString())
-        .then((response) => {
-          setNftData(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-        });
+    // if
+    if (!isError) {
+      if (data) {
+        // Make an Axios GET request to the data URL and update the state with the fetched data
+        axios
+          .get(data?.toString())
+          .then((response) => {
+            console.log("Response", response);
+            setNftData(response.data);
+          })
+          .catch((error) => {
+            console.log("Data .. ", data);
+            console.error("Error fetching data:", error);
+          });
+      }
     } else {
       setNftData(null);
     }
   }, [data]);
+
+  useEffect(() => {
+    console.log("NFT : ", nftData);
+  }, [nftData]);
 
   return (
     <>

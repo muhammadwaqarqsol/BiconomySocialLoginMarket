@@ -7,6 +7,7 @@ import { MintModal } from "./ui/MintModal";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/GlobalRedux/store";
 import { login } from "@/GlobalRedux/Features/smartAccountslice";
+import { setAccount } from "@/GlobalRedux/Features/smartslice";
 
 const transport = webSocket(
   "wss://polygon-mumbai.g.alchemy.com/v2/Mh7MEm0SLywtlNh1_bcuroflDlQ3wYpu"
@@ -42,6 +43,7 @@ export default function MintNft({
     setSmartContractAddress(smartContractAddress);
     localStorage.setItem("address", smartContractAddress);
     dispatch(login(smartContractAddress));
+    dispatch(setAccount(smartAccount));
   }
 
   async function getBalance() {

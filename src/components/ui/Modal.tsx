@@ -2,37 +2,110 @@ import React, { ChangeEvent, useState, useEffect } from "react";
 import { isAddress } from "viem";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ERC721ABI, NFT_CONTRACT_ADDRESS } from "../constants";
+import { ethers } from "ethers";
+import {
+  IHybridPaymaster,
+  PaymasterMode,
+  SponsorUserOperationDto,
+} from "@biconomy/paymaster";
+import { useAppSelector } from "@/GlobalRedux/store";
 interface nftData {
   tokenId: string; // Change the type of projectID to match your data type
 }
 export const Modal: React.FC<nftData> = ({ tokenId }) => {
+  const smartAccount = useAppSelector(
+    (state) => state.smartReducer.value.smartAccount
+  );
+  const address = useAppSelector(
+    (state) => state.smartAccountReducer.value.smartAccountaddress
+  );
   const [showModal, setShowModal] = useState(false);
   const [showaddress, setAddress] = useState("");
   const [error, setError] = useState(false);
+  const [status, setStatus] = useState(false);
 
-  // const { writeAsync, data: transfer } = useNFTFunctionwriter("transferFrom", [
-  //   address,
-  //   showaddress,
-  //   tokenId,
-  // ]);
-  // let {
-  //   isLoading,
-  //   isSuccess,
-  //   isError: Errormessage,
-  // } = useWaitForTransaction({
-  //   hash: transfer?.hash,
-  // });
+  const handleMint = async () => {
+    setStatus(false);
+    const contract = new ethers.Contract(
+      NFT_CONTRACT_ADDRESS,
+      ERC721ABI,
+      smartAccount.provider
+    );
+    try {
+      const minTx = await contract.populateTransaction.transferFrom(
+        address,
+        showaddress,
+        tokenId
+      );
+      console.log(minTx.data);
+      const tx1 = {
+        to: NFT_CONTRACT_ADDRESS,
+        data: minTx.data,
+      };
+      console.log("here before userop");
+      let userOp = await smartAccount.buildUserOp([tx1]);
+      console.log("USER OPERATION CONSOLE", { userOp });
 
-  // const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   let value = e.target.value;
-  //   if (isAddress(value)) {
-  //     setAddress(e.target.value);
-  //     Debug && console.log(showaddress);
-  //     setError(false);
-  //   } else {
-  //     setError(true);
-  //   }
-  // };
+      const biconomyPaymaster =
+        smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
+      console.log(biconomyPaymaster);
+      console.log(smartAccount);
+      let paymasterServiceData: SponsorUserOperationDto = {
+        mode: PaymasterMode.SPONSORED,
+        calculateGasLimits: true,
+      };
+      console.log("Paymaster", biconomyPaymaster);
+      const paymasterAndDataResponse =
+        await biconomyPaymaster.getPaymasterAndData(
+          userOp,
+          paymasterServiceData
+        );
+
+      console.log("response paymaster", paymasterAndDataResponse);
+
+      userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
+      console.log("useropcondirmed");
+      const userOpResponse = await smartAccount.sendUserOp(userOp);
+      console.log("Just a debug check");
+      console.log("userOpHash", userOpResponse);
+
+      // Wait for the transaction to be mined and get the receipt
+      const { receipt } = await userOpResponse.wait(1);
+      console.log("txHash", receipt.transactionHash);
+
+      // Check if the receipt is available and then set mintstatus to false
+      if (userOpResponse) {
+        setStatus(true);
+        toast.success("Nft transfered Successfully ", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      console.log(err);
+      setError(true);
+      setStatus(false); // Set mintstatus to false in case of an error
+    }
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    if (isAddress(value)) {
+      setAddress(e.target.value);
+      console.log(showaddress);
+      setError(false);
+    } else {
+      setError(true);
+    }
+  };
   // const handleTransfer = async () => {
   //   try {
   //     await writeAsync?.();
@@ -52,16 +125,7 @@ export const Modal: React.FC<nftData> = ({ tokenId }) => {
   //   if (isSuccess) {
   //     isSuccess = false;
   //     //   setShowModal(false)
-  //     toast.success("Nft transfered Successfully ", {
-  //       position: "top-right",
-  //       autoClose: 2000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: false,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "light",
-  //     });
+  //
   //     Debug && console.log(transfer, "Data");
   //   }
   // }, [isSuccess]);
@@ -102,7 +166,7 @@ export const Modal: React.FC<nftData> = ({ tokenId }) => {
                     </div>
                     <div className="md:w-2/3">
                       <input
-                        // onChange={handleChange}
+                        onChange={handleChange}
                         name="Description"
                         className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
                         type="text"
@@ -122,7 +186,7 @@ export const Modal: React.FC<nftData> = ({ tokenId }) => {
                   <button
                     className="linear rounded-[20px] bg-red-400 px-4 py-2 text-base font-medium text-black transition duration-200 hover:bg-grey-200"
                     type="button"
-                    // disabled={isLoading}
+                    disabled={status}
                     onClick={() => setShowModal(false)}
                   >
                     Close
@@ -130,10 +194,10 @@ export const Modal: React.FC<nftData> = ({ tokenId }) => {
                   <button
                     className="ml-5 linear rounded-[20px] bg-green-300 px-4 py-2 text-base font-medium text-black transition duration-200 hover:bg-green-200 active:bg-yellow-200"
                     type="button"
-                    // onClick={() => handleTransfer()}
-                    // disabled={isLoading}
+                    onClick={() => handleMint()}
+                    disabled={status}
                   >
-                    {/* {isLoading ? "Please Wait" : "confirm Transfer"} */}
+                    {status ? "Please Wait" : "confirm Transfer"}
                   </button>
                 </div>
               </div>
