@@ -1,36 +1,31 @@
 "use client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BiconomySmartAccount } from "@biconomy/account";
+import SocialLogin from "@biconomy/web3-auth";
 type InitialState = {
   value: SmartAccount;
 };
 
 type SmartAccount = {
-  smartAccountaddress: string;
+  sdkref: SocialLogin | null;
 };
 
-const initialState = {
+const initialState: InitialState = {
   value: {
-    smartAccountaddress: "",
+    sdkref: null,
   } as SmartAccount,
-} as InitialState;
+};
 
 export const smartAccount = createSlice({
   name: "smartAccount",
   initialState,
   reducers: {
-    logout: () => {
-      return initialState;
-    },
-    login: (state, action: PayloadAction<string>) => {
-      return {
-        value: {
-          smartAccountaddress: action.payload,
-        },
-      };
+    setSdkRef: (state, action: PayloadAction<SocialLogin | null>) => {
+      state.value.sdkref = action.payload;
     },
   },
 });
-export const { logout, login } = smartAccount.actions;
+
+export const { setSdkRef } = smartAccount.actions;
 
 export default smartAccount.reducer;

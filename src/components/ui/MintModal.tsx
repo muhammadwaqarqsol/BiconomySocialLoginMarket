@@ -10,6 +10,7 @@ import {
   SponsorUserOperationDto,
 } from "@biconomy/paymaster";
 import Link from "next/link";
+import { useAppSelector } from "@/GlobalRedux/store";
 
 interface MintModalProps {
   selectedImage: File | null | undefined;
@@ -37,6 +38,9 @@ export const MintModal: React.FC<MintModalProps> = ({
   smartAccount,
   smartContractAddress,
 }: MintModalProps) => {
+  const useraddress = useAppSelector(
+    (state) => state.smartAccountReducer.value.smartAccountaddress
+  );
   const [showModal, setShowModal] = useState(false);
   const [isError, setError] = useState(false);
   const [MetadataStatus, setMetadataStatus] = useState(false);
@@ -271,7 +275,7 @@ export const MintModal: React.FC<MintModalProps> = ({
 
   return (
     <Fragment>
-      {SmartAccount ? (
+      {useraddress ? (
         <button
           disabled={!isFormValid || showModal}
           className="bg-purple-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg disabled:bg-slate-200"

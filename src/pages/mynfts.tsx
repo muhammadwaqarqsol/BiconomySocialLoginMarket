@@ -33,7 +33,7 @@ const MyNfts = () => {
   if (!useraddress) {
     return (
       <div className="flex justify-center items-center text-2xl text-red-500 rounded-lg">
-        Connect wallet First
+        Login First To see Your NFTs
       </div>
     );
   }
@@ -377,7 +377,7 @@ const MyNfts = () => {
             </svg>
           </div>
         ) : (
-          data.map((item, index) => {
+          data?.map((item, index) => {
             // Convert bigint to string
             const itemString = item.toString();
             const itemnumber = parseInt(itemString);

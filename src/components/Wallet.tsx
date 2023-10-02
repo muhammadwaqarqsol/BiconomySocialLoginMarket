@@ -14,22 +14,29 @@ import {
   BiconomySmartAccountConfig,
 } from "@biconomy/account";
 import { DEFAULT_ENTRYPOINT_ADDRESS } from "@biconomy/account";
-import PagesModal from "./ui/PagesModal";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/GlobalRedux/store";
+import { AppDispatch, useAppSelector } from "@/GlobalRedux/store";
 import { setAccount } from "@/GlobalRedux/Features/smartslice";
+import { setSdkRef } from "@/GlobalRedux/Features/sdkRefslice";
 import { useRouter } from "next/router";
+import { useContractRead } from "wagmi";
+import PagesModal from "./ui/PageModal";
 
 export default function Wallet() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const address = useAppSelector(
+    (state) => state.smartAccountReducer.value.smartAccountaddress
+  );
+
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const [isOpen, setIsOpen] = useState(false);
   const sdkRef = useRef<SocialLogin | null>(null);
   const [interval, enableInterval] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [, setProvider] = useState<ethers.providers.Web3Provider>();
   const [smartAccount, setSmartAccount] = useState<BiconomySmartAccount>();
-  // login() function
+
   async function login() {
     console.log("Interval", interval);
     console.log("sdk", sdkRef);
@@ -51,6 +58,9 @@ export default function Wallet() {
         },
       });
       sdkRef.current = socialLoginSDK;
+      if (sdkRef) {
+        dispatch(setSdkRef(socialLoginSDK));
+      }
     }
     if (!sdkRef.current?.provider) {
       sdkRef.current?.showWallet();
@@ -99,7 +109,7 @@ export default function Wallet() {
     setLoading(false);
   }
 
-  export async function logOut() {
+  async function logOut() {
     // Log out of the smart account
     await sdkRef.current?.logout();
 
@@ -111,6 +121,13 @@ export default function Wallet() {
     setSmartAccount(undefined);
     enableInterval(false);
   }
+
+  const { data, error } = useContractRead({
+    address: NFT_CONTRACT_ADDRESS,
+    abi: ERC721ABI,
+    functionName: "balanceOf",
+    args: [smartAccount?.getSmartAccountAddress],
+  });
 
   useEffect(() => {
     let configureLogin: NodeJS.Timeout | undefined;
@@ -124,19 +141,22 @@ export default function Wallet() {
     }
   }, [interval]);
 
-  useEffect(() => {
-    if (smartAccount) {
-      router.reload();
-      router.push("/mintnft");
-      alert("You Are LoggedIn");
-    }
-  }, [smartAccount]);
-
   return (
     <Fragment>
       {/* Logout Button */}
       {smartAccount && (
         <>
+          <div className="flex flex-row justify-start items-center">
+            <div>
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="absolute  m-3 rounded-lg bg-gradient-to-r from-green-400 to-blue-500 px-4 py-2 font-medium transition-all hover:from-green-500 hover:to-blue-600"
+              >
+                Navigate to Pages
+              </button>
+              {isOpen && <PagesModal isOpen={isOpen} />}
+            </div>
+          </div>
           <button
             onClick={logOut}
             className="absolute right-0 m-3 rounded-lg bg-gradient-to-r from-green-400 to-blue-500 px-4 py-2 font-medium transition-all hover:from-green-500 hover:to-blue-600 "

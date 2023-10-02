@@ -1,23 +1,48 @@
 import { useAppSelector } from "@/GlobalRedux/store";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { ERC721ABI, NFT_CONTRACT_ADDRESS } from "./constants";
 import { useContractRead } from "wagmi";
+import { useRouter } from "next/router";
+import { removeAccount } from "@/GlobalRedux/Features/smartslice";
 
 const Navbar = () => {
+  const router = useRouter();
   const address = useAppSelector(
     (state) => state.smartAccountReducer.value.smartAccountaddress
   );
+
   const smartAccount = useAppSelector(
     (state) => state.smartReducer.value.smartAccount
   );
 
+  const sdkref = useAppSelector((state) => state.sdkRefReducer.value.sdkref);
+
   const { data, error } = useContractRead({
     address: NFT_CONTRACT_ADDRESS,
     abi: ERC721ABI,
-    functionName: "tokenURI",
+    functionName: "balanceOf",
     args: [address],
   });
+
+  async function logout() {
+    await sdkref?.logout();
+    sdkref?.hideWallet();
+    removeAccount();
+    window.localStorage.clear();
+    await router.push("/");
+    setTimeout(() => {
+      router.reload();
+    }, 500);
+  }
+
+  useEffect(() => {
+    console.log(data);
+    console.log(address);
+  });
+  if (!address && smartAccount) {
+    return null;
+  }
 
   return (
     <header className="text-gray-600 body-font">
@@ -34,17 +59,25 @@ const Navbar = () => {
           </a>
         </nav>
         <div className="flex flex-row gap-6 justify-center items-center rounded-lg ">
-          {/* <div>
-            {smartAccount ? (
+          <div>
+            {address ? (
               <p className="text-xl justify-center items-center bg-purple-300 rounded-3xl p-2">
                 Owned : {data?.toString()}
               </p>
             ) : null}
-          </div> */}
-          {/* <ConnectKitButton showBalance /> */}
+          </div>
+          <div>
+            <button
+              onClick={logout}
+              className=" right-0 m-3 rounded-lg bg-gradient-to-r from-green-400 to-blue-500 px-4 py-2 font-medium transition-all hover:from-green-500 hover:to-blue-600"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </div>
     </header>
   );
 };
+
 export default Navbar;

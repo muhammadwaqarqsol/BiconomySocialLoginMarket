@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig config={config}>
       <ReduxProviders>
-         <Navbar />
+        <Navbar />
         <Component {...pageProps} />
       </ReduxProviders>
     </WagmiConfig>

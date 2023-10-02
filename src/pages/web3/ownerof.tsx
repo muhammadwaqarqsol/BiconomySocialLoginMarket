@@ -42,14 +42,16 @@ export const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
   const ownerString: string = Ownerof as string;
 
   useEffect(() => {
-    if (!isError) {
-      if (ownerString.toLowerCase() === address.toLowerCase()) {
+    if (!isError && Ownerof) {
+      // Check if Ownerof is not undefined or null
+      const ownerLowercase = ownerString.toLowerCase(); // Convert to lowercase
+      if (ownerLowercase === address.toLowerCase()) {
         if (data) {
           axios
-            .get(data?.toString())
+            .get(data.toString())
             .then((response) => {
               const currentData = response.data;
-              const updateNftData: any = {
+              const updateNftData = {
                 ...currentData,
                 nftTokenId: projectID,
               };
@@ -61,7 +63,7 @@ export const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
         }
       }
     }
-  }, [data]);
+  }, [data, projectID]);
 
   return (
     <>
