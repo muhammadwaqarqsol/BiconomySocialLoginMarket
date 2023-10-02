@@ -39,11 +39,19 @@ const MintNft = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   async function getContractAddress() {
-    if (smartAccount) {
+    if (
+      smartAccount &&
+      typeof smartAccount.getSmartAccountAddress === "function"
+    ) {
       const smartContractAddress = await smartAccount.getSmartAccountAddress();
       setSmartContractAddress(smartContractAddress);
       localStorage.setItem("address", smartContractAddress);
       dispatch(login(smartContractAddress));
+    } else {
+      // Handle the case where smartAccount or getSmartAccountAddress is undefined
+      console.error(
+        "Smart account or getSmartAccountAddress function is not available."
+      );
     }
   }
 
@@ -59,7 +67,7 @@ const MintNft = () => {
       functionName: "balanceOf",
       args: [localStorage.getItem("address")],
     });
-    
+
     if (!data) {
       return;
     }
