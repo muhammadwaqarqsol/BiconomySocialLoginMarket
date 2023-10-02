@@ -36,6 +36,17 @@ const Navbar = () => {
     }, 500);
   }
 
+  function copyAddress() {
+    navigator.clipboard
+      .writeText(address)
+      .then(function () {
+        alert("Address copied to clipboard: " + address);
+      })
+      .catch(function (err) {
+        console.error("Unable to copy address: ", err);
+      });
+  }
+
   useEffect(() => {
     console.log(data);
     console.log(address);
@@ -65,6 +76,12 @@ const Navbar = () => {
                 Owned : {data?.toString()}
               </p>
             ) : null}
+          </div>
+          <div
+            className="text-xl justify-center items-center bg-purple-300 rounded-3xl p-2"
+            onClick={copyAddress}
+          >
+            Address {address.toString().slice(0, 8)}...
           </div>
           <div>
             <button

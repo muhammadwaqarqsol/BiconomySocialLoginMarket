@@ -69,7 +69,7 @@ export const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
     <>
       {nftData && (
         <div className="flex flex-col justify-center items-center m-4">
-          <div className="!z-5 relative rounded-[20px] max-w-[500px] max-h-[500px] bg-clip-border shadow-3xl shadow-shadow-500 flex flex-col w-full !p-4 3xl:p-![18px] bg-white outline-dashed undefined">
+          <div className="!z-5 relative rounded-[20px] max-w-[500px] max-h-[500px] bg-clip-border shadow-3xl shadow-shadow-500 flex flex-col w-full !p-4 3xl:p-![18px] bg-white outline-dashed undefined group">
             <div className="h-full w-full">
               <div className="relative w-full">
                 <img
@@ -81,8 +81,7 @@ export const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
               <div className="mb-3 flex items-center justify-between px-1 md:items-start">
                 <div className="mb-2">
                   <p className="text-lg font-bold text-navy-700">
-                    {" "}
-                    {nftData?.name}{" "}
+                    {nftData?.name}
                   </p>
                   <p className="text-lg mt-1 font-medium text-gray-600 md:mt-2">
                     {nftData?.description}
@@ -90,6 +89,9 @@ export const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
                   <p className="mt-1 text-sm font-medium text-gray-600 md:mt-2">
                     By You
                   </p>
+                </div>
+                <div className="group-hover:text-purple-400 bg-slate-300 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+                  {address}
                 </div>
               </div>
               <div className="flex items-center justify-between md:items-center lg:justify-between ">
