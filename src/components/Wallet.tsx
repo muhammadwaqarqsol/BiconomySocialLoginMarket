@@ -9,15 +9,20 @@ import {
   bundler,
   paymaster,
 } from "./constants";
-import MintNft from "./MintNft";
 import {
   BiconomySmartAccount,
   BiconomySmartAccountConfig,
 } from "@biconomy/account";
 import { DEFAULT_ENTRYPOINT_ADDRESS } from "@biconomy/account";
 import PagesModal from "./ui/PagesModal";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/GlobalRedux/store";
+import { setAccount } from "@/GlobalRedux/Features/smartslice";
+import { useRouter } from "next/router";
 
 export default function Wallet() {
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const [isOpen, setIsOpen] = useState(false);
   const sdkRef = useRef<SocialLogin | null>(null);
   const [interval, enableInterval] = useState<boolean>(false);
@@ -86,14 +91,15 @@ export default function Wallet() {
 
       // Save the smart account to a state variable
       setSmartAccount(smartAccount);
+      dispatch(setAccount(smartAccount));
+      router.push("/mintnft");
     } catch (e) {
       console.error(e);
     }
-
     setLoading(false);
   }
 
-  async function logOut() {
+  export async function logOut() {
     // Log out of the smart account
     await sdkRef.current?.logout();
 
@@ -117,22 +123,20 @@ export default function Wallet() {
       }, 1000);
     }
   }, [interval]);
+
+  useEffect(() => {
+    if (smartAccount) {
+      router.reload();
+      router.push("/mintnft");
+      alert("You Are LoggedIn");
+    }
+  }, [smartAccount]);
+
   return (
     <Fragment>
       {/* Logout Button */}
       {smartAccount && (
         <>
-          <div className="flex flex-row justify-start items-center">
-            <div>
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="absolute  m-3 rounded-lg bg-gradient-to-r from-green-400 to-blue-500 px-4 py-2 font-medium transition-all hover:from-green-500 hover:to-blue-600"
-              >
-                Navigate to Pages
-              </button>
-              {isOpen && <PagesModal isOpen={isOpen} />}
-            </div>
-          </div>
           <button
             onClick={logOut}
             className="absolute right-0 m-3 rounded-lg bg-gradient-to-r from-green-400 to-blue-500 px-4 py-2 font-medium transition-all hover:from-green-500 hover:to-blue-600 "
@@ -161,13 +165,6 @@ export default function Wallet() {
 
         {/* Loading state */}
         {loading && <p>Loading account details...</p>}
-
-        {smartAccount && (
-          <Fragment>
-            {" "}
-            <MintNft smartAccount={smartAccount} />
-          </Fragment>
-        )}
       </div>
     </Fragment>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ListedNfts } from "./web3/listednfts";
 import { NFT_CONTRACT_ADDRESS, ERC721ABI } from "@/components/constants";
 import { useContractRead } from "wagmi";
@@ -9,7 +9,11 @@ const NftListing = () => {
     abi: ERC721ABI,
     functionName: "_tokenIds",
   });
-  const totaltokens = 31;
+
+  useEffect(() => {
+    console.log("Data", Number(data));
+  });
+  const totaltokens = Number(data);
 
   if (!totaltokens) {
     return (

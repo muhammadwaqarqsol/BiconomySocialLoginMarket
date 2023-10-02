@@ -43,13 +43,6 @@ export const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
 
   useEffect(() => {
     if (!isError) {
-      console.log(typeof ownerString);
-      console.log(typeof address);
-      console.log(ownerString);
-      console.log(address);
-      ownerString.replace(/[^\w]/g, "");
-      address.replace(/[^\w]/g, "");
-      console.log(ownerString.trim() === address.trim());
       if (ownerString.toLowerCase() === address.toLowerCase()) {
         if (data) {
           axios

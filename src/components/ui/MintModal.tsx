@@ -64,65 +64,65 @@ export const MintModal: React.FC<MintModalProps> = ({
     setTokenUri(TokenUri);
   };
 
-  const handleMint = async () => {
-    setMintstatus(false);
-    const contract = new ethers.Contract(
-      NFT_CONTRACT_ADDRESS,
-      ERC721ABI,
-      smartAccount.provider
-    );
-    try {
-      const minTx = await contract.populateTransaction.createToken(
-        smartContractAddress,
-        tokenUri
-      );
-      console.log(minTx.data);
-      const tx1 = {
-        to: NFT_CONTRACT_ADDRESS,
-        data: minTx.data,
-      };
-      console.log("here before userop");
-      let userOp = await smartAccount.buildUserOp([tx1]);
-      console.log("USER OPERATION CONSOLE", { userOp });
+  // const handleMint = async () => {
+  //   setMintstatus(false);
+  //   const contract = new ethers.Contract(
+  //     NFT_CONTRACT_ADDRESS,
+  //     ERC721ABI,
+  //     smartAccount.provider
+  //   );
+  //   try {
+  //     const minTx = await contract.populateTransaction.createToken(
+  //       smartContractAddress,
+  //       tokenUri
+  //     );
+  //     console.log(minTx.data);
+  //     const tx1 = {
+  //       to: NFT_CONTRACT_ADDRESS,
+  //       data: minTx.data,
+  //     };
+  //     console.log("here before userop");
+  //     let userOp = await smartAccount.buildUserOp([tx1]);
+  //     console.log("USER OPERATION CONSOLE", { userOp });
 
-      const biconomyPaymaster =
-        smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
-      console.log(biconomyPaymaster);
-      console.log(smartAccount);
-      let paymasterServiceData: SponsorUserOperationDto = {
-        mode: PaymasterMode.SPONSORED,
-        calculateGasLimits: true,
-      };
-      console.log("Paymaster", biconomyPaymaster);
-      const paymasterAndDataResponse =
-        await biconomyPaymaster.getPaymasterAndData(
-          userOp,
-          paymasterServiceData
-        );
+  //     const biconomyPaymaster =
+  //       smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
+  //     console.log(biconomyPaymaster);
+  //     console.log(smartAccount);
+  //     let paymasterServiceData: SponsorUserOperationDto = {
+  //       mode: PaymasterMode.SPONSORED,
+  //       calculateGasLimits: true,
+  //     };
+  //     console.log("Paymaster", biconomyPaymaster);
+  //     const paymasterAndDataResponse =
+  //       await biconomyPaymaster.getPaymasterAndData(
+  //         userOp,
+  //         paymasterServiceData
+  //       );
 
-      console.log("response paymaster", paymasterAndDataResponse);
+  //     console.log("response paymaster", paymasterAndDataResponse);
 
-      userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
-      console.log("useropcondirmed");
-      const userOpResponse = await smartAccount.sendUserOp(userOp);
-      console.log("Just a debug check");
-      console.log("userOpHash", userOpResponse);
+  //     userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
+  //     console.log("useropcondirmed");
+  //     const userOpResponse = await smartAccount.sendUserOp(userOp);
+  //     console.log("Just a debug check");
+  //     console.log("userOpHash", userOpResponse);
 
-      // Wait for the transaction to be mined and get the receipt
-      const { receipt } = await userOpResponse.wait(1);
-      console.log("txHash", receipt.transactionHash);
+  //     // Wait for the transaction to be mined and get the receipt
+  //     const { receipt } = await userOpResponse.wait(1);
+  //     console.log("txHash", receipt.transactionHash);
 
-      // Check if the receipt is available and then set mintstatus to false
-      if (userOpResponse) {
-        setMintstatus(true);
-      }
-    } catch (err) {
-      console.error(err);
-      console.log(err);
-      setError(true);
-      setMintstatus(false); // Set mintstatus to false in case of an error
-    }
-  };
+  //     // Check if the receipt is available and then set mintstatus to false
+  //     if (userOpResponse) {
+  //       setMintstatus(true);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     console.log(err);
+  //     setError(true);
+  //     setMintstatus(false); // Set mintstatus to false in case of an error
+  //   }
+  // };
 
   // async function handleUpload() {
   //   try {
@@ -183,6 +183,62 @@ export const MintModal: React.FC<MintModalProps> = ({
   //     console.log(error);
   //   }
   // }
+
+  const handleMint = async () => {
+    setMintstatus(false);
+    console.log("smart Account in add nft: ", smartAccount);
+    const readProvider = smartAccount.provider;
+    const contract = new ethers.Contract(
+      NFT_CONTRACT_ADDRESS,
+      ERC721ABI,
+      readProvider
+    );
+    try {
+      const populatedTxn = await contract.populateTransaction.createToken(
+        smartContractAddress,
+        tokenUri
+      );
+
+      const calldata = populatedTxn.data;
+      const tx1 = {
+        to: NFT_CONTRACT_ADDRESS,
+        data: calldata,
+      };
+
+      console.log("here before userop");
+      let userOp = await smartAccount.buildUserOp([tx1]);
+      console.log("userop", { userOp });
+      const biconomyPaymaster =
+        smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
+      console.log(biconomyPaymaster);
+      console.log(smartAccount);
+      let paymasterServiceData: SponsorUserOperationDto = {
+        mode: PaymasterMode.SPONSORED,
+      };
+      console.log("Hello");
+      const paymasterAndDataResponse =
+        await biconomyPaymaster.getPaymasterAndData(
+          userOp,
+          paymasterServiceData
+        );
+      console.log("Hello2");
+
+      userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
+      console.log("Hello3");
+      const userOpResponse = await smartAccount.sendUserOp(userOp);
+      console.log("Hello4");
+      console.log("userOpHash", userOpResponse);
+      const { receipt } = await userOpResponse.wait(1);
+      console.log("txHash", receipt.transactionHash);
+      if (userOpResponse) {
+        setMintstatus(true);
+      }
+    } catch (err) {
+      console.error(err);
+      console.log(err);
+      setMintstatus(false);
+    }
+  };
 
   function cancelAll() {
     setShowModal(false);

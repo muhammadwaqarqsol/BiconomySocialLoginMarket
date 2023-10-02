@@ -26,75 +26,132 @@ export const Modal: React.FC<nftData> = ({ tokenId }) => {
   const [status, setStatus] = useState(false);
 
   const handleMint = async () => {
-    setStatus(false);
+    setStatus(true);
+    console.log("smart Account in add nft: ", smartAccount);
+    const readProvider = smartAccount.provider;
     const contract = new ethers.Contract(
       NFT_CONTRACT_ADDRESS,
       ERC721ABI,
-      smartAccount.provider
+      readProvider
     );
     try {
-      const minTx = await contract.populateTransaction.transferFrom(
+      const populatedTxn = await contract.populateTransaction.transferFrom(
         address,
         showaddress,
         tokenId
       );
-      console.log(minTx.data);
+
+      const calldata = populatedTxn.data;
       const tx1 = {
         to: NFT_CONTRACT_ADDRESS,
-        data: minTx.data,
+        data: calldata,
       };
+
       console.log("here before userop");
       let userOp = await smartAccount.buildUserOp([tx1]);
-      console.log("USER OPERATION CONSOLE", { userOp });
-
+      console.log("userop", { userOp });
       const biconomyPaymaster =
         smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
       console.log(biconomyPaymaster);
       console.log(smartAccount);
       let paymasterServiceData: SponsorUserOperationDto = {
         mode: PaymasterMode.SPONSORED,
-        calculateGasLimits: true,
       };
-      console.log("Paymaster", biconomyPaymaster);
+      console.log("Hello");
       const paymasterAndDataResponse =
         await biconomyPaymaster.getPaymasterAndData(
           userOp,
           paymasterServiceData
         );
-
-      console.log("response paymaster", paymasterAndDataResponse);
+      console.log("Hello2");
 
       userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
-      console.log("useropcondirmed");
+      console.log("Hello3");
       const userOpResponse = await smartAccount.sendUserOp(userOp);
-      console.log("Just a debug check");
+      console.log("Hello4");
       console.log("userOpHash", userOpResponse);
-
-      // Wait for the transaction to be mined and get the receipt
       const { receipt } = await userOpResponse.wait(1);
       console.log("txHash", receipt.transactionHash);
-
-      // Check if the receipt is available and then set mintstatus to false
       if (userOpResponse) {
         setStatus(true);
-        toast.success("Nft transfered Successfully ", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
       }
     } catch (err) {
       console.error(err);
       console.log(err);
-      setError(true);
-      setStatus(false); // Set mintstatus to false in case of an error
+      setStatus(true);
     }
   };
+
+  // const handleMint = async () => {
+  //   setStatus(false);
+  //   const contract = new ethers.Contract(
+  //     NFT_CONTRACT_ADDRESS,
+  //     ERC721ABI,
+  //     smartAccount.provider
+  //   );
+  //   try {
+  //     const minTx = await contract.populateTransaction.transferFrom(
+  //       address,
+  //       showaddress,
+  //       tokenId
+  //     );
+  //     console.log(minTx.data);
+  //     const tx1 = {
+  //       to: NFT_CONTRACT_ADDRESS,
+  //       data: minTx.data,
+  //     };
+  //     console.log("here before userop");
+  //     let userOp = await smartAccount.buildUserOp([tx1]);
+  //     console.log("USER OPERATION CONSOLE", { userOp });
+
+  //     const biconomyPaymaster =
+  //       smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
+  //     console.log(biconomyPaymaster);
+  //     console.log(smartAccount);
+  //     let paymasterServiceData: SponsorUserOperationDto = {
+  //       mode: PaymasterMode.SPONSORED,
+  //       calculateGasLimits: true,
+  //     };
+  //     console.log("Paymaster", biconomyPaymaster);
+  //     const paymasterAndDataResponse =
+  //       await biconomyPaymaster.getPaymasterAndData(
+  //         userOp,
+  //         paymasterServiceData
+  //       );
+
+  //     console.log("response paymaster", paymasterAndDataResponse);
+
+  //     userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
+  //     console.log("useropcondirmed");
+  //     const userOpResponse = await smartAccount.sendUserOp(userOp);
+  //     console.log("Just a debug check");
+  //     console.log("userOpHash", userOpResponse);
+
+  //     // Wait for the transaction to be mined and get the receipt
+  //     const { receipt } = await userOpResponse.wait(1);
+  //     console.log("txHash", receipt.transactionHash);
+
+  //     // Check if the receipt is available and then set mintstatus to false
+  //     if (userOpResponse) {
+  //       setStatus(true);
+  //       toast.success("Nft transfered Successfully ", {
+  //         position: "top-right",
+  //         autoClose: 2000,
+  //         hideProgressBar: false,
+  //         closeOnClick: true,
+  //         pauseOnHover: false,
+  //         draggable: true,
+  //         progress: undefined,
+  //         theme: "light",
+  //       });
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     console.log(err);
+  //     setError(true);
+  //     setStatus(false); // Set mintstatus to false in case of an error
+  //   }
+  // };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
@@ -121,14 +178,15 @@ export const Modal: React.FC<nftData> = ({ tokenId }) => {
   //     });
   //   }
   // };
-  // useEffect(() => {
-  //   if (isSuccess) {
-  //     isSuccess = false;
-  //     //   setShowModal(false)
-  //
-  //     Debug && console.log(transfer, "Data");
-  //   }
-  // }, [isSuccess]);
+  useEffect(() => {
+    if (status == true) {
+      setStatus(false); //   setShowModal(false)
+      setTimeout(() => {
+        setShowModal(false);
+      }, 3000); // 3000 milliseconds = 3 seconds
+    }
+  }, [status]);
+
   return (
     <>
       <button

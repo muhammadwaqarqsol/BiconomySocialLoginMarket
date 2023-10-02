@@ -14,9 +14,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   return (
     <main className={inter.className}>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Wallet />
-      </Suspense>
+      <Suspense fallback={<div>Loading...</div>}>{<Wallet />}</Suspense>
     </main>
   );
 }

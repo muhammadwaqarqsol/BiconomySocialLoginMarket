@@ -3,25 +3,24 @@ import { BiconomySmartAccount } from "@biconomy/account";
 import { createPublicClient, http, webSocket } from "viem";
 import { polygonMumbai } from "viem/chains";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { MintModal } from "./ui/MintModal";
+import { MintModal } from "@/components/ui/MintModal";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/GlobalRedux/store";
+import { AppDispatch, useAppSelector } from "@/GlobalRedux/store";
 import { login } from "@/GlobalRedux/Features/smartAccountslice";
-import { setAccount } from "@/GlobalRedux/Features/smartslice";
 
 const transport = webSocket(
   "wss://polygon-mumbai.g.alchemy.com/v2/Mh7MEm0SLywtlNh1_bcuroflDlQ3wYpu"
 );
+
 export const publicClient = createPublicClient({
   chain: polygonMumbai,
   transport,
 });
 
-export default function MintNft({
-  smartAccount,
-}: {
-  smartAccount: BiconomySmartAccount;
-}) {
+const MintNft = () => {
+  const smartAccount = useAppSelector(
+    (state) => state.smartReducer.value.smartAccount
+  );
   const dispatch = useDispatch<AppDispatch>();
   const [isImageSelected, setIsImageSelected] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
@@ -43,7 +42,6 @@ export default function MintNft({
     setSmartContractAddress(smartContractAddress);
     localStorage.setItem("address", smartContractAddress);
     dispatch(login(smartContractAddress));
-    dispatch(setAccount(smartAccount));
   }
 
   async function getBalance() {
@@ -229,4 +227,6 @@ export default function MintNft({
       )}
     </div>
   );
-}
+};
+
+export default MintNft;
