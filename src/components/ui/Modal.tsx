@@ -74,6 +74,9 @@ export const Modal: React.FC<nftData> = ({ tokenId }) => {
       console.log("txHash", receipt.transactionHash);
       if (userOpResponse) {
         setStatus(false);
+        setTimeout(() => {
+          setShowModal(false);
+        }, 1500);
       }
     } catch (err) {
       console.error(err);
@@ -92,15 +95,6 @@ export const Modal: React.FC<nftData> = ({ tokenId }) => {
       setError(true);
     }
   };
-
-  useEffect(() => {
-    if (status == true) {
-      setStatus(false); //   setShowModal(false)
-      setTimeout(() => {
-        setShowModal(false);
-      }, 3000); // 3000 milliseconds = 3 seconds
-    }
-  }, [status]);
 
   return (
     <>
@@ -168,9 +162,9 @@ export const Modal: React.FC<nftData> = ({ tokenId }) => {
                     className="ml-5 linear rounded-[20px] bg-green-300 px-4 py-2 text-base font-medium text-black transition duration-200 hover:bg-green-200 active:bg-yellow-200"
                     type="button"
                     onClick={() => handletransfer()}
-                    disabled={!status}
+                    disabled={status}
                   >
-                    {status ? "Please Wait" : "confirm Transfer"}
+                    {status ? "Please Wait" : "Confirm Transfer"}
                   </button>
                 </div>
               </div>
