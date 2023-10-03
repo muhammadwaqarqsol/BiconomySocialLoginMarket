@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import ImageUploader from "../../utils/ImageUploader";
 import metaData from "../../utils/Metadata";
-import { BiconomySmartAccount, SmartAccount } from "@biconomy/account";
+import { BiconomySmartAccount } from "@biconomy/account";
 import { ethers } from "ethers";
 import { NFT_CONTRACT_ADDRESS, ERC721ABI } from "@/components/constants";
 import {
@@ -68,125 +68,7 @@ export const MintModal: React.FC<MintModalProps> = ({
     setTokenUri(TokenUri);
   };
 
-  // const handleMint = async () => {
-  //   setMintstatus(false);
-  //   const contract = new ethers.Contract(
-  //     NFT_CONTRACT_ADDRESS,
-  //     ERC721ABI,
-  //     smartAccount.provider
-  //   );
-  //   try {
-  //     const minTx = await contract.populateTransaction.createToken(
-  //       smartContractAddress,
-  //       tokenUri
-  //     );
-  //     console.log(minTx.data);
-  //     const tx1 = {
-  //       to: NFT_CONTRACT_ADDRESS,
-  //       data: minTx.data,
-  //     };
-  //     console.log("here before userop");
-  //     let userOp = await smartAccount.buildUserOp([tx1]);
-  //     console.log("USER OPERATION CONSOLE", { userOp });
-
-  //     const biconomyPaymaster =
-  //       smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
-  //     console.log(biconomyPaymaster);
-  //     console.log(smartAccount);
-  //     let paymasterServiceData: SponsorUserOperationDto = {
-  //       mode: PaymasterMode.SPONSORED,
-  //       calculateGasLimits: true,
-  //     };
-  //     console.log("Paymaster", biconomyPaymaster);
-  //     const paymasterAndDataResponse =
-  //       await biconomyPaymaster.getPaymasterAndData(
-  //         userOp,
-  //         paymasterServiceData
-  //       );
-
-  //     console.log("response paymaster", paymasterAndDataResponse);
-
-  //     userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
-  //     console.log("useropcondirmed");
-  //     const userOpResponse = await smartAccount.sendUserOp(userOp);
-  //     console.log("Just a debug check");
-  //     console.log("userOpHash", userOpResponse);
-
-  //     // Wait for the transaction to be mined and get the receipt
-  //     const { receipt } = await userOpResponse.wait(1);
-  //     console.log("txHash", receipt.transactionHash);
-
-  //     // Check if the receipt is available and then set mintstatus to false
-  //     if (userOpResponse) {
-  //       setMintstatus(true);
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     console.log(err);
-  //     setError(true);
-  //     setMintstatus(false); // Set mintstatus to false in case of an error
-  //   }
-  // };
-
-  // async function handleUpload() {
-  //   try {
-  //     console.log("smart Account in add nft: ", smartAccount);
-
-  //     // Create an Ethers Contract instance for USDC
-  //     const readProvider = smartAccount.provider;
-  //     console.log("READ Provider : ", readProvider);
-  //     // make contract instance
-  //     const nftContract = new ethers.Contract(
-  //       NFT_CONTRACT_ADDRESS,
-  //       ERC721ABI,
-  //       readProvider
-  //     );
-
-  //     // Create the calldata for our UserOperation
-  //     const populatedTransferTxn =
-  //       await nftContract.populateTransaction.createToken(
-  //         smartContractAddress,
-  //         tokenUri
-  //       );
-
-  //     console.log("Populate :: ", populatedTransferTxn.data);
-  //     const calldata = populatedTransferTxn.data;
-  //     // Build the UserOperation
-  //     const userOp = await smartAccount.buildUserOp([
-  //       {
-  //         to: NFT_CONTRACT_ADDRESS,
-  //         data: calldata,
-  //       },
-  //     ]);
-
-  //     console.log("USER OP : ", userOp);
-
-  //     // Get the paymaster fee quote from Biconomy
-  //     const biconomyPaymaster =
-  //       smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
-
-  //     let paymasterServiceData: SponsorUserOperationDto = {
-  //       mode: PaymasterMode.SPONSORED,
-  //     };
-  //     console.log("Check Payment service..", paymasterServiceData);
-  //     const paymasterAndDataResponse =
-  //       await biconomyPaymaster.getPaymasterAndData(
-  //         userOp,
-  //         paymasterServiceData
-  //       );
-
-  //     userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
-  //     console.log("check...", paymasterAndDataResponse);
-
-  //     const userOpResponse = await smartAccount.sendUserOp(userOp);
-  //     console.log("userOpHash", userOpResponse);
-  //     const { receipt } = await userOpResponse.wait(1);
-  //     console.log("txHash..", receipt);
-  //     console.log(Number(receipt.logs[2]?.data), "HEX TO decimal");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
+ 
 
   const handleMint = async () => {
     setMintstatus(false);

@@ -89,8 +89,7 @@ export default function Wallet() {
       setProvider(web3Provider);
       const config: BiconomySmartAccountConfig = {
         signer: web3Provider.getSigner(),
-        rpcUrl:
-          "https://polygon-mumbai.g.alchemy.com/v2/Mh7MEm0SLywtlNh1_bcuroflDlQ3wYpu",
+        rpcUrl: process.env.NEXT_PUBLIC_RPC,
         entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
         chainId: ChainId.POLYGON_MUMBAI,
         bundler: bundler,
@@ -144,7 +143,7 @@ export default function Wallet() {
   return (
     <Fragment>
       {/* Logout Button */}
-      {smartAccount && (
+      {/* {smartAccount && (
         <>
           <div className="flex flex-row justify-start items-center">
             <div>
@@ -164,7 +163,7 @@ export default function Wallet() {
             Logout
           </button>
         </>
-      )}
+      )} */}
 
       <div className="m-auto flex h-screen flex-col items-center justify-center gap-10">
         {!smartAccount && !loading && (

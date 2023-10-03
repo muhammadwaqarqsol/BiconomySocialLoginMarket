@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState, useEffect } from "react";
 import { isAddress } from "viem";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ERC721ABI, NFT_CONTRACT_ADDRESS } from "../constants";
 import { ethers } from "ethers";

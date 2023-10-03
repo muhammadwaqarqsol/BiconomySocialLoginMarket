@@ -7,7 +7,6 @@ import { MintModal } from "@/components/ui/MintModal";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "@/GlobalRedux/store";
 import { login } from "@/GlobalRedux/Features/smartAccountslice";
-import PagesModal from "@/components/ui/PageModal";
 
 const transport = webSocket(
   "wss://polygon-mumbai.g.alchemy.com/v2/Mh7MEm0SLywtlNh1_bcuroflDlQ3wYpu"
