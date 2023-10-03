@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { ListedNfts } from "./web3/listednfts";
+import  ListedNfts from "./web3/listednfts";
 import { NFT_CONTRACT_ADDRESS, ERC721ABI } from "@/components/constants";
 import { useContractRead } from "wagmi";
 const NftListing = () => {

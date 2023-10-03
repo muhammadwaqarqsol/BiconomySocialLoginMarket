@@ -1,5 +1,5 @@
 import { ERC721ABI, NFT_CONTRACT_ADDRESS } from "@/components/constants";
-import { OwnedListedNfts } from "./web3/ownerof";
+import  OwnedListedNfts  from "./web3/ownerof";
 import { useAccount, useContractRead } from "wagmi";
 import { useAppSelector } from "@/GlobalRedux/store";
 import { useEffect } from "react";

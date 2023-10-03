@@ -13,8 +13,7 @@ interface NFTData {
   description: string;
   // Add more properties if needed
 }
-
-export const ListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
+const ListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
   const [nftData, setNftData] = useState<NFTData | null>(null); // Use NFTData type for nftData initially
 
   const { data, isError, error } = useContractRead({
@@ -90,3 +89,5 @@ export const ListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
     </>
   );
 };
+
+export default ListedNfts;

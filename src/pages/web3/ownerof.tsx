@@ -15,7 +15,7 @@ interface NFTData {
   nftTokenId: string;
 }
 
-export const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
+const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
   const address = useAppSelector(
     (state) => state.smartAccountReducer.value.smartAccountaddress
   );
@@ -104,3 +104,5 @@ export const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
     </>
   );
 };
+
+export default OwnedListedNfts;
