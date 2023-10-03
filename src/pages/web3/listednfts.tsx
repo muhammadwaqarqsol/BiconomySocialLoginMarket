@@ -20,14 +20,14 @@ const ListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
     address: NFT_CONTRACT_ADDRESS,
     abi: ERC721ABI,
     functionName: "tokenURI",
-    args: [projectID.toString()],
+    args: [projectID ? projectID.toString() : ""],
   });
 
   const { data: Ownerof, error: projectIderor } = useContractRead({
     address: NFT_CONTRACT_ADDRESS,
     abi: ERC721ABI,
     functionName: "ownerOf",
-    args: [projectID.toString()],
+    args: [projectID ? projectID.toString() : ""],
   });
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const ListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
       if (data) {
         // Make an Axios GET request to the data URL and update the state with the fetched data
         axios
-          .get(data?.toString())
+          .get(data ? data?.toString() : "")
           .then((response) => {
             console.log("Response", response);
             setNftData(response.data);
@@ -63,7 +63,7 @@ const ListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
             <div className="h-full w-full">
               <div className="relative w-full">
                 <img
-                  src={nftData?.image}
+                  src={nftData ? nftData?.image : "Loading..."}
                   className="mb-3 h-40 w-full rounded-xl 3xl:h-full 3xl:w-full "
                   alt=""
                 />
@@ -72,13 +72,14 @@ const ListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
                 <div className="mb-2">
                   <p className="text-lg font-bold text-navy-700">
                     {" "}
-                    {nftData?.name}{" "}
+                    {nftData ? nftData?.name : "Loading..."}{" "}
                   </p>
                   <p className="text-lg mt-1 font-medium text-gray-600 md:mt-2">
-                    {nftData?.description}
+                    {nftData ? nftData?.description : "Loading..."}
                   </p>
                   <p className="mt-1 text-sm font-medium text-gray-600 md:mt-2 ">
-                    Owned By {Ownerof?.toString().slice(0, 8)}...
+                    Owned By{" "}
+                    {Ownerof ? Ownerof?.toString().slice(0, 8) : "Loading.."}...
                   </p>
                 </div>
               </div>

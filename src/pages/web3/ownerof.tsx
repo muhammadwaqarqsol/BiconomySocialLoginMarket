@@ -25,7 +25,7 @@ const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
     address: NFT_CONTRACT_ADDRESS,
     abi: ERC721ABI,
     functionName: "tokenURI",
-    args: [projectID.toString()],
+    args: [projectID ? projectID.toString() : ""],
   });
 
   const {
@@ -36,7 +36,7 @@ const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
     address: NFT_CONTRACT_ADDRESS,
     abi: ERC721ABI,
     functionName: "ownerOf",
-    args: [projectID.toString()],
+    args: [projectID ? projectID.toString() : ""],
   });
 
   const ownerString: string = Ownerof as string;
@@ -48,7 +48,7 @@ const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
       if (ownerLowercase === address.toLowerCase()) {
         if (data) {
           axios
-            .get(data.toString())
+            .get(data ? data.toString() : "")
             .then((response) => {
               const currentData = response.data;
               const updateNftData = {
@@ -73,7 +73,7 @@ const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
             <div className="h-full w-full">
               <div className="relative w-full">
                 <img
-                  src={nftData?.image}
+                  src={nftData ? nftData?.image : "Loading..."}
                   className="mb-3 h-40 w-full rounded-xl 3xl:h-full 3xl:w-full"
                   alt=""
                 />
@@ -81,10 +81,10 @@ const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
               <div className="mb-3 flex items-center justify-between px-1 md:items-start">
                 <div className="mb-2">
                   <p className="text-lg font-bold text-navy-700">
-                    {nftData?.name}
+                    {nftData ? nftData?.name : "Loading..."}
                   </p>
                   <p className="text-lg mt-1 font-medium text-gray-600 md:mt-2">
-                    {nftData?.description}
+                    {nftData ? nftData?.description : "Loading..."}
                   </p>
                   <p className="mt-1 text-sm font-medium text-gray-600 md:mt-2">
                     By You
@@ -95,7 +95,7 @@ const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
                 </div>
               </div>
               <div className="flex items-center justify-between md:items-center lg:justify-between ">
-                <Modal tokenId={nftData?.nftTokenId} />
+                <Modal tokenId={nftData ? nftData?.nftTokenId : "Loading..."} />
               </div>
             </div>
           </div>
