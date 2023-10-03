@@ -43,7 +43,7 @@ export default function Wallet() {
     if (!sdkRef.current) {
       const socialLoginSDK = new SocialLogin();
       const signature1 = await socialLoginSDK.whitelistUrl(
-        "https://biconomy-social-login-git-main-muhammad-waqar-uit.vercel.app"
+        "https://biconomy-social-login-market-git-main-muhammadwaqarqsol.vercel.app"
       );
       const signature2 = await socialLoginSDK.whitelistUrl(
         "http://localhost:3000/"
