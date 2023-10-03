@@ -52,7 +52,7 @@ export default function Wallet() {
         chainId: ethers.utils.hexValue(ChainId.POLYGON_MUMBAI).toString(),
         network: "testnet",
         whitelistUrls: {
-          "biconomy-social-login-market-git-main-muhammadwaqarqsol.vercel.app":
+          "https://biconomy-social-login-market-git-main-muhammadwaqarqsol.vercel.app/":
             signature1,
           "http://localhost:3000/": signature2,
         },
