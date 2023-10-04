@@ -18,7 +18,7 @@ export const Modal: React.FC<nftData> = ({ tokenId }) => {
     (state) => state.smartReducer.value.smartAccount
   );
   const address = useAppSelector(
-    (state) => state.smartAccountReducer.value.smartAccountaddress
+    (state) => state.smartAccountReducer.value.Accountaddress
   );
   const [showModal, setShowModal] = useState(false);
   const [showaddress, setAddress] = useState("");
