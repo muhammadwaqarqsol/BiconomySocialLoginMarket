@@ -26,7 +26,7 @@ export default function Wallet() {
   const [isOpen, setIsOpen] = useState(false);
 
   const address = useAppSelector(
-    (state) => state.smartAccountReducer.value.smartAccountaddress
+    (state) => state.smartAccountReducer.value.Accountaddress
   );
 
   const router = useRouter();

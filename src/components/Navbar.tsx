@@ -9,7 +9,7 @@ import { removeAccount } from "@/GlobalRedux/Features/smartslice";
 const Navbar = () => {
   const router = useRouter();
   const address = useAppSelector(
-    (state) => state.smartAccountReducer.value.smartAccountaddress
+    (state) => state.smartAccountReducer.value.Accountaddress
   );
 
   const smartAccount = useAppSelector(

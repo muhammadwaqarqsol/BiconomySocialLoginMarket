@@ -39,7 +39,7 @@ export const MintModal: React.FC<MintModalProps> = ({
   smartContractAddress,
 }: MintModalProps) => {
   const useraddress = useAppSelector(
-    (state) => state.smartAccountReducer.value.smartAccountaddress
+    (state) => state.smartAccountReducer.value.Accountaddress
   );
   const [showModal, setShowModal] = useState(false);
   const [isError, setError] = useState(false);
@@ -67,8 +67,6 @@ export const MintModal: React.FC<MintModalProps> = ({
     let TokenUri = `https://ipfs.io/ipfs/${metadatares?.IpfsHash}`;
     setTokenUri(TokenUri);
   };
-
- 
 
   const handleMint = async () => {
     setMintstatus(false);

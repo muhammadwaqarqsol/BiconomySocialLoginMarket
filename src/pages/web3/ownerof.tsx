@@ -17,7 +17,7 @@ interface NFTData {
 
 const OwnedListedNfts: React.FC<ListedNftsProps> = ({ projectID }) => {
   const address = useAppSelector(
-    (state) => state.smartAccountReducer.value.smartAccountaddress
+    (state) => state.smartAccountReducer.value.Accountaddress
   );
   const [nftData, setNftData] = useState<NFTData | null>(null); // Use NFTData type for nftData initially
 

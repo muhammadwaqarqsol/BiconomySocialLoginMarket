@@ -1,22 +1,21 @@
 "use client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BiconomySmartAccount } from "@biconomy/account";
 type InitialState = {
-  value: SmartAccount;
+  value: SmartAccountAddress;
 };
 
-type SmartAccount = {
-  smartAccountaddress: string;
+type SmartAccountAddress = {
+  Accountaddress: string;
 };
 
 const initialState = {
   value: {
-    smartAccountaddress: "",
-  } as SmartAccount,
+    Accountaddress: "",
+  } as SmartAccountAddress,
 } as InitialState;
 
-export const smartAccount = createSlice({
-  name: "smartAccount",
+export const smartAccountAddress = createSlice({
+  name: "AccountAddress",
   initialState,
   reducers: {
     logout: () => {
@@ -25,12 +24,12 @@ export const smartAccount = createSlice({
     login: (state, action: PayloadAction<string>) => {
       return {
         value: {
-          smartAccountaddress: action.payload,
+          Accountaddress: action.payload,
         },
       };
     },
   },
 });
-export const { logout, login } = smartAccount.actions;
+export const { logout, login } = smartAccountAddress.actions;
 
-export default smartAccount.reducer;
+export default smartAccountAddress.reducer;

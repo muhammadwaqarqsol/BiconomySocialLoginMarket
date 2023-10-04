@@ -3,21 +3,21 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BiconomySmartAccount } from "@biconomy/account";
 import SocialLogin from "@biconomy/web3-auth";
 type InitialState = {
-  value: SmartAccount;
+  value: SDKRef;
 };
 
-type SmartAccount = {
+type SDKRef = {
   sdkref: SocialLogin | null;
 };
 
 const initialState: InitialState = {
   value: {
     sdkref: null,
-  } as SmartAccount,
+  } as SDKRef,
 };
 
-export const smartAccount = createSlice({
-  name: "smartAccount",
+export const SDK = createSlice({
+  name: "sdkRef",
   initialState,
   reducers: {
     setSdkRef: (state, action: PayloadAction<SocialLogin | null>) => {
@@ -26,6 +26,6 @@ export const smartAccount = createSlice({
   },
 });
 
-export const { setSdkRef } = smartAccount.actions;
+export const { setSdkRef } = SDK.actions;
 
-export default smartAccount.reducer;
+export default SDK.reducer;
